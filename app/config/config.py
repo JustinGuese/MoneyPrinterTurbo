@@ -10,12 +10,12 @@ config_file = f"{root_dir}/config.toml"
 # i dont want to use config files, use env instead
 _cfg = {
     "video_source" : "pexels",
-    "pexels_api_keys": os.environ("PEXELS_API_KEYS", "").split(","),
+    "pexels_api_keys": os.environ.get("PEXELS_API_KEYS", "").split(","),
     "llm_provider": "openai",
     "openai_api_key": os.environ["OPENAI_API_KEY"],
-    "openai_model_name": os.environ("OPENAI_MODEL_NAME", "gpt-4-turbo"),
+    "openai_model_name": os.environ.get("OPENAI_MODEL_NAME", "gpt-4-turbo"),
     "subtitle_provider": "edge",
-    "endpoint": os.environ("ENDPOINT", "http://localhost:8000"),
+    "endpoint": os.environ.get("ENDPOINT", "http://localhost:8000"),
     "material_directory": "/storage",
 }
 
