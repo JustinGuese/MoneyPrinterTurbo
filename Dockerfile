@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.10-slim-bullseye
+FROM python:3.11-slim
 
 # Set the working directory in the container
 WORKDIR /MoneyPrinterTurbo
@@ -32,8 +32,8 @@ COPY . .
 EXPOSE 8501
 
 # Command to run the application
-CMD ["streamlit", "run", "./webui/Main.py","--browser.serverAddress=127.0.0.1","--server.enableCORS=True","--browser.gatherUsageStats=False"]
-
+# CMD ["streamlit", "run", "./webui/Main.py","--browser.serverAddress=127.0.0.1","--server.enableCORS=True","--browser.gatherUsageStats=False"]
+CMD ["python", "main.py"] # api
 # 1. Build the Docker image using the following command
 # docker build -t moneyprinterturbo .
 
