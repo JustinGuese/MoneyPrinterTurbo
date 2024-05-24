@@ -1,7 +1,8 @@
 import os
-import socket
-import toml
 import shutil
+import socket
+
+import toml
 from loguru import logger
 
 root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
@@ -9,17 +10,19 @@ config_file = f"{root_dir}/config.toml"
 
 # i dont want to use config files, use env instead
 _cfg = {
-    "app" : {
-        "video_source" : "pexels",
+    "app": {
+        "video_source": "pexels",
         "pexels_api_keys": os.environ.get("PEXELS_API_KEYS", "").split(","),
         "llm_provider": "openai",
         "openai_api_key": os.environ["OPENAI_API_KEY"],
         "openai_model_name": os.environ.get("OPENAI_MODEL_NAME", "gpt-4-turbo"),
+        "openai_base_url": os.environ.get(
+            "OPENAI_BASE_URL", "https://api.openai.com/v1"
+        ),
         "subtitle_provider": "edge",
         "endpoint": os.environ.get("ENDPOINT", "http://localhost:8000"),
         "material_directory": "/storage",
     }
-    
 }
 
 
@@ -35,8 +38,10 @@ log_level = _cfg.get("log_level", "DEBUG")
 listen_host = _cfg.get("listen_host", "0.0.0.0")
 listen_port = _cfg.get("listen_port", 8080)
 project_name = _cfg.get("project_name", "MoneyPrinterTurbo")
-project_description = _cfg.get("project_description",
-                               "<a href='https://github.com/harry0703/MoneyPrinterTurbo'>https://github.com/harry0703/MoneyPrinterTurbo</a>")
+project_description = _cfg.get(
+    "project_description",
+    "<a href='https://github.com/harry0703/MoneyPrinterTurbo'>https://github.com/harry0703/MoneyPrinterTurbo</a>",
+)
 project_version = _cfg.get("project_version", "1.1.9")
 reload_debug = False
 
