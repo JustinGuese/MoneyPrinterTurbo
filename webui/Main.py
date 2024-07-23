@@ -246,7 +246,17 @@ if not config.app.get("hide_config", False):
                            - **Base Url**: 固定为 https://api.moonshot.cn/v1
                            - **Model Name**: 比如 moonshot-v1-8k，[点击查看模型列表](https://platform.moonshot.cn/docs/intro#%E6%A8%A1%E5%9E%8B%E5%88%97%E8%A1%A8)
                            """
-
+            if llm_provider == 'oneapi':
+                if not llm_model_name:
+                    llm_model_name = "claude-3-5-sonnet-20240620"  # 默认模型，可以根据需要调整
+                with llm_helper:
+                    tips = """
+                        ##### OneAPI 配置说明
+                        - **API Key**: 填写您的 OneAPI 密钥
+                        - **Base Url**: 填写 OneAPI 的基础 URL
+                        - **Model Name**: 填写您要使用的模型名称，例如 claude-3-5-sonnet-20240620
+                        """
+                    
             if llm_provider == 'qwen':
                 if not llm_model_name:
                     llm_model_name = "qwen-max"
@@ -323,7 +333,11 @@ if not config.app.get("hide_config", False):
             st_llm_base_url = st.text_input(tr("Base Url"), value=llm_base_url)
             st_llm_model_name = ""
             if llm_provider != 'ernie':
-                st.text_input(tr("Model Name"), value=llm_model_name)
+                st_llm_model_name = st.text_input(tr("Model Name"), value=llm_model_name, key=f"{llm_provider}_model_name_input")
+                if st_llm_model_name:
+                    config.app[f"{llm_provider}_model_name"] = st_llm_model_name
+            else:
+                st_llm_model_name = None
 
             if st_llm_api_key:
                 config.app[f"{llm_provider}_api_key"] = st_llm_api_key
@@ -510,11 +524,11 @@ with middle_panel:
             with st.spinner(tr("Synthesizing Voice")):
                 temp_dir = utils.storage_dir("temp", create=True)
                 audio_file = os.path.join(temp_dir, f"tmp-voice-{str(uuid4())}.mp3")
-                sub_maker = voice.tts(text=play_content, voice_name=voice_name, voice_file=audio_file)
+                sub_maker = voice.tts(text=play_content, voice_name=voice_name, voice_rate=params.voice_rate, voice_file=audio_file)
                 # if the voice file generation failed, try again with a default content.
                 if not sub_maker:
                     play_content = "This is a example voice. if you hear this, the voice synthesis failed with the original content."
-                    sub_maker = voice.tts(text=play_content, voice_name=voice_name, voice_file=audio_file)
+                    sub_maker = voice.tts(text=play_content, voice_name=voice_name, voice_rate=params.voice_rate, voice_file=audio_file)
 
                 if sub_maker and os.path.exists(audio_file):
                     st.audio(audio_file, format="audio/mp3")
@@ -531,6 +545,10 @@ with middle_panel:
 
         params.voice_volume = st.selectbox(tr("Speech Volume"),
                                            options=[0.6, 0.8, 1.0, 1.2, 1.5, 2.0, 3.0, 4.0, 5.0], index=2)
+        
+        params.voice_rate = st.selectbox(tr("Speech Rate"),
+                                           options=[0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.5, 1.8, 2.0], index=2)
+        
         bgm_options = [
             (tr("No Background Music"), ""),
             (tr("Random Background Music"), "random"),
